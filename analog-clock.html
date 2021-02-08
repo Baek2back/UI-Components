@@ -162,8 +162,8 @@
         ];
         hour %= 12;
 
-        $hour.style.setProperty('--deg', 30 * hour);
-        $minute.style.setProperty('--deg', 6 * minute);
+        $hour.style.setProperty('--deg', 30 * hour + 0.5 * minute);
+        $minute.style.setProperty('--deg', 6 * minute + 0.1 * second);
         $second.style.setProperty('--deg', 6 * second);
 
         window.requestAnimationFrame(clock);
