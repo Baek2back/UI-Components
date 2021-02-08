@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Stopwatch</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: 'Source Code Pro', monospace;
+      }
+      .title {
+        color: #db5b33;
+        font-weight: 300;
+        text-align: center;
+      }
+      .stopwatch {
+        text-align: center;
+        font-size: 3em;
+        padding: 30px;
+      }
+      .control {
+        width: 120px;
+        padding: 5px;
+        margin: 15px;
+        font-size: 36px;
+        font-weight: bold;
+        border: 2px solid #f44336;
+        border-radius: 4px;
+        cursor: pointer;
+        outline: none;
+      }
+      .control:hover:enabled {
+        background: #f44336;
+        color: aliceblue;
+      }
+      .control:disabled {
+        color: gray;
+        cursor: not-allowed;
+      }
+      .laps {
+        display: grid;
+        grid-template-columns: 70px 1fr;
+        column-gap: 50px;
+        row-gap: 10px;
+        width: 260px;
+        margin: 10px auto;
+        font-size: 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Stopwatch</h1>
+    <div class="stopwatch">
+      <div class="display">00:00:00</div>
+      <button class="control">Start</button>
+      <button class="control" disabled>Reset</button>
+      <div class="laps">
+        <div class="lap-title">Laps</div>
+        <div class="lap-title">Time</div>
+      </div>
+    </div>
+    <script>
+      let stopWatchState = {
+        start: null,
+        elapsed: 0,
+        stored: 0,
+        isWatching: false,
+        rafId: null,
+        laps: []
+      };
+
+      const $stopwatch = document.querySelector('.stopwatch');
+      const $template = document.createElement('template');
+      const $display = $stopwatch.querySelector('.display');
+      const $laps = $stopwatch.querySelector('.laps');
+
+      const [$startOrStop, $resetOrLab] = $stopwatch.querySelectorAll(
+        'button.control'
+      );
+
+      const timeConverter = time => {
+        const [ss, ms] = [
+          Math.floor(time / 1000),
+          Math.floor((time % 1000) / 10)
+        ];
+        return [Math.floor(ss / 60), ss % 60, ms]
+          .map(v => (v < 10 ? `0${v}` : v))
+          .join(':');
+      };
+
+      const timer = () => {
+        stopWatchState.elapsed = Date.now() - stopWatchState.start;
+        const totalElapsed = stopWatchState.stored + stopWatchState.elapsed;
+        $display.textContent = timeConverter(totalElapsed);
+        stopWatchState.rafId = window.requestAnimationFrame(timer);
+      };
+
+      $startOrStop.addEventListener('click', event => {
+        if (!stopWatchState.isWatching) {
+          // Start
+          stopWatchState = {
+            ...stopWatchState,
+            isWatching: true,
+            start: Date.now()
+          };
+          $startOrStop.textContent = 'Stop';
+          $resetOrLab.textContent = 'Lab';
+          $resetOrLab.disabled = false;
+          window.requestAnimationFrame(timer);
+        } else {
+          // Stop
+          $startOrStop.textContent = 'Start';
+          $resetOrLab.textContent = 'Reset';
+          window.cancelAnimationFrame(stopWatchState.rafId);
+          stopWatchState = {
+            ...stopWatchState,
+            isWatching: false,
+            rafId: null,
+            start: null,
+            stored: stopWatchState.stored + stopWatchState.elapsed,
+            elapsed: 0
+          };
+        }
+      });
+
+      $resetOrLab.addEventListener('click', event => {
+        if (!stopWatchState.isWatching) {
+          // Reset
+          stopWatchState = {
+            ...stopWatchState,
+            isWatching: false,
+            stored: 0,
+            laps: []
+          };
+          $resetOrLab.disabled = true;
+          $display.textContent = timeConverter(0);
+          [...$laps.children].forEach(node => {
+            if (node.className === 'lap-title') return;
+            node.remove();
+          });
+        } else {
+          // Laps
+          const currentTime = $display.textContent;
+          stopWatchState = {
+            ...stopWatchState,
+            laps: [...stopWatchState.laps, currentTime]
+          };
+
+          const order = stopWatchState.laps.length;
+
+          $template.innerHTML = /*html*/ `
+            <div>${order}</div>
+            <div>${stopWatchState.laps[order - 1]}</div>
+          `;
+
+          $laps.appendChild($template.content);
+        }
+      });
+    </script>
+  </body>
+</html>
