@@ -178,7 +178,7 @@
         $nav.addEventListener('click', event => {
           if (!event.target.matches('input')) return;
           currentIndex = +event.target.id - 1;
-          $glider.style.left = `${currentIndex * tabWidth}px`;
+          $glider.style.transform = `translateX(${currentIndex * tabWidth}px)`;
           renderTabs($tabContents);
         });
       })();
