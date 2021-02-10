@@ -22,6 +22,7 @@
       body {
         font-family: 'Open Sans';
         font-weight: 300;
+        opacity: 0;
       }
       .title {
         color: #db5b33;
@@ -116,6 +117,9 @@
 
       const $body = document.querySelector('body');
       isDark === 'true' && $body.classList.toggle('dark');
+      setTimeout(() => {
+        $body.style.opacity = '1';
+      }, 300);
 
       const $toggleBtn = document.querySelector('.toggle-button');
       $toggleBtn.addEventListener('click', () => {

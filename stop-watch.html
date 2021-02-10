@@ -50,6 +50,7 @@
         width: 260px;
         margin: 10px auto;
         font-size: 0.5em;
+        display: none;
       }
     </style>
   </head>
@@ -111,6 +112,7 @@
           $startOrStop.textContent = 'Stop';
           $resetOrLab.textContent = 'Lab';
           $resetOrLab.disabled = false;
+          $laps.style.display = 'grid';
           window.requestAnimationFrame(timer);
         } else {
           // Stop
@@ -143,6 +145,7 @@
             if (node.className === 'lap-title') return;
             node.remove();
           });
+          $laps.style.display = 'none';
         } else {
           // Laps
           const currentTime = $display.textContent;
