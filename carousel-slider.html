@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400"
+      rel="stylesheet"
+    />
+    <title>Carousel Slider</title>
+    <style>
+      *,
+      *::after,
+      *::before {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Open Sans';
+        font-weight: 300;
+        color: #58666e;
+        background-color: #f0f3f4;
+      }
+      .title {
+        color: #db5b33;
+        font-weight: 300;
+        text-align: center;
+      }
+      /* 캐러셀의 window 역할을 한다. */
+      .carousel {
+        position: relative;
+        margin: 0 auto;
+        overflow: hidden;
+        /* carousel 요소의 width 셋팅이 완료될 때까지 감춘다. */
+        opacity: 0;
+      }
+      .carousel-slides {
+        --currentSlide: 0;
+        --duration: 0;
+        /* 수평 정렬 */
+        display: flex;
+        transition: transform calc(var(--duration) * 1ms) ease-out;
+        transform: translate3D(calc(var(--currentSlide) * -100%), 0, 0);
+      }
+      .carousel-slides img {
+        padding: 5px;
+      }
+      /* carousel의 prev, next 버튼 */
+      .carousel-control {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2em;
+        color: #fff;
+        background-color: transparent;
+        border-color: transparent;
+        cursor: pointer;
+        z-index: 99;
+      }
+      .carousel-control:focus {
+        outline: none;
+      }
+      /* carousel의 prev 버튼 */
+      .carousel-control.prev {
+        left: 0;
+      }
+      /* carousel의 next 버튼 */
+      .carousel-control.next {
+        right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Carousel Slider</h1>
+    <div class="carousel"></div>
+    <script>
+      const carousel = ($container, images) => {
+        let currentSlide = 1;
+
+        const DURATION = 500;
+        const THROTTLE_DELAY = 500;
+        const LOOP_DELAY = 5000;
+
+        const $carouselSlides = document.createElement('div');
+
+        const [$prevButton, $nextButton] = [
+          document.createElement('button'),
+          document.createElement('button')
+        ];
+
+        const setCurrentSlide = (newCurrentSlide, duration = 0) => {
+          currentSlide = newCurrentSlide;
+          $carouselSlides.style.setProperty('--currentSlide', currentSlide);
+          $carouselSlides.style.setProperty('--duration', duration);
+        };
+
+        const initHtml = (() => {
+          $carouselSlides.setAttribute('class', 'carousel-slides');
+
+          images.forEach(image => {
+            const $img = document.createElement('img');
+            $img.setAttribute('src', image);
+            $carouselSlides.appendChild($img);
+          });
+
+          const $firstImg = $carouselSlides.firstElementChild;
+          const $lastImg = $carouselSlides.lastElementChild;
+
+          $carouselSlides.insertBefore($lastImg.cloneNode(true), $firstImg);
+          $carouselSlides.appendChild($firstImg.cloneNode(true));
+
+          setCurrentSlide(currentSlide);
+
+          $prevButton.setAttribute('class', 'carousel-control prev');
+          $nextButton.setAttribute('class', 'carousel-control next');
+
+          $prevButton.innerText = '≪';
+          $nextButton.innerText = '≫';
+
+          $container.appendChild($carouselSlides);
+          $container.appendChild($prevButton);
+          $container.appendChild($nextButton);
+
+          $container.style.width = `${$firstImg.scrollWidth}px`;
+          $container.style.opacity = 1;
+        })();
+
+        const handleEvents = (() => {
+          const toNext = () => {
+            const nextSlide = currentSlide + 1;
+            setCurrentSlide(nextSlide, DURATION);
+            if (nextSlide >= images.length + 1) {
+              setTimeout(() => {
+                setCurrentSlide(1);
+              }, DURATION + 1);
+            }
+          };
+
+          const toPrev = () => {
+            const prevSlide = currentSlide - 1;
+            setCurrentSlide(prevSlide, DURATION);
+            if (prevSlide <= 0) {
+              setTimeout(() => {
+                setCurrentSlide(images.length);
+              }, DURATION + 1);
+            }
+          };
+
+          const throttle = (callback, delay) => {
+            let timerId;
+            return event => {
+              if (timerId) return;
+              timerId = setTimeout(
+                () => {
+                  callback(event);
+                  timerId = null;
+                },
+                delay,
+                event
+              );
+            };
+          };
+
+          const resetLoop = (() => {
+            let timerId;
+            return () => {
+              if (timerId) {
+                clearInterval(timerId);
+                timerId = null;
+              }
+              timerId = setInterval(() => {
+                toNext();
+              }, LOOP_DELAY);
+            };
+          })();
+
+          resetLoop();
+
+          $prevButton.onclick = throttle(() => {
+            toPrev();
+            resetLoop();
+          }, THROTTLE_DELAY);
+
+          $nextButton.onclick = throttle(() => {
+            toNext();
+            resetLoop();
+          }, THROTTLE_DELAY);
+        })();
+      };
+
+      carousel(document.querySelector('.carousel'), [
+        'https://poiemaweb.com/assets/fs-images/exercise/movies/movie-1.jpg',
+        'https://poiemaweb.com/assets/fs-images/exercise/movies/movie-2.jpg',
+        'https://poiemaweb.com/assets/fs-images/exercise/movies/movie-3.jpg',
+        'https://poiemaweb.com/assets/fs-images/exercise/movies/movie-4.jpg'
+      ]);
+    </script>
+  </body>
+</html>

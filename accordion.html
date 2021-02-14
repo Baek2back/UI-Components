@@ -26,6 +26,7 @@
         font-family: 'Open Sans';
         font-weight: 300;
         background-color: #d6e1e5;
+        opacity: 0;
       }
       .accordion {
         max-width: 360px;
@@ -165,6 +166,9 @@
       };
 
       renderMenuContainers($menuContainers);
+      setTimeout(() => {
+        document.body.style.opacity = 1;
+      }, 400);
 
       $accordion.addEventListener('click', event => {
         if (event.target.matches('.submenu') || event.target.matches('a'))
