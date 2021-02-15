@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar</title>
+    <!-- 원하는 폰트와 아이콘을 사용해도 좋다. -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::after,
+      *::before {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Open Sans';
+        font-weight: 300;
+      }
+      .title {
+        color: #db5b33;
+        font-weight: 300;
+        text-align: center;
+      }
+      .calendar {
+        margin: 0 auto;
+        width: 800px;
+      }
+      time > span {
+        display: block;
+      }
+
+      .calendar-nav {
+        display: flex;
+        background: green;
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+      }
+
+      /* 뷰를 구현하세요. */
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Calendar</h1>
+    <div class="calendar">
+      <!-- 뷰를 구현하세요 -->
+      <div class="calendar-nav">
+        <button class="prev-button">◀︎</button>
+        <time>
+          <span>January</span>
+          <span>2021</span>
+        </time>
+        <button class="next-button">►</button>
+      </div>
+      <div class="calendar-grid">
+        <div class="item">SUN</div>
+        <div class="item">MON</div>
+        <div class="item">TUE</div>
+        <div class="item">WED</div>
+        <div class="item">THU</div>
+        <div class="item">FRI</div>
+        <div class="item">SAT</div>
+      </div>
+    </div>
+    <script>
+      const range = (start, end) =>
+        Array.from({ length: end - start }, (_, idx) => idx + 1);
+
+      const today = new Date();
+      let [year, month] = [today.getFullYear(), today.getMonth()];
+
+      const getCalendar = (year, month) => {
+        let calendar = {
+          year,
+          month
+        };
+
+        const lastOfPrevMonth = new Date(year, month, 0);
+        const firstOfCurrentMonth = new Date(year, month, 1);
+        const lastOfCurrentMonth = new Date(year, month + 1, 0);
+        const firstOfNextMonth = new Date(year, month + 1, 1);
+
+        let prevMonthEnd = lastOfPrevMonth.getDate();
+        let currentMonthStart = firstOfCurrentMonth.getDate();
+        let currentMonthEnd = lastOfCurrentMonth.getDate();
+        let nextMonthStart = firstOfNextMonth.getDate();
+
+        calendar.prev = range(
+          prevMonthEnd,
+          prevMonthEnd + firstOfCurrentMonth.getDay()
+        )
+          .map(v => prevMonthEnd + 1 - v)
+          .reverse();
+
+        calendar.current = range(currentMonthStart, currentMonthEnd + 1);
+
+        calendar.next = range(
+          nextMonthStart,
+          nextMonthStart + 6 - lastOfCurrentMonth.getDay()
+        );
+
+        return calendar;
+      };
+
+      console.log(getCalendar(year, month));
+
+      const $calendarNav = document.querySelector('.calendar-nav');
+
+      const $prevBtn = $calendarNav.querySelector('.prev-button');
+      const $nextBtn = $calendarNav.querySelector('.next-button');
+
+      const toPrevMonth = (year, month) => {
+        return month === 0 ? [year - 1, 11] : [year, month - 1];
+      };
+
+      const toNextMonth = (year, month) => {
+        return month === 11 ? [year + 1, 0] : [year, month + 1];
+      };
+
+      $prevBtn.onclick = () => {
+        [year, month] = toPrevMonth(year, month);
+        console.log(getCalendar(year, month));
+      };
+
+      $nextBtn.onclick = () => {
+        [year, month] = toNextMonth(year, month);
+        console.log(getCalendar(year, month));
+      };
+    </script>
+  </body>
+</html>
