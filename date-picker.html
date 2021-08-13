@@ -87,12 +87,11 @@
         const lastOfPrevMonth = new Date(year, month, 0);
         const firstOfCurrentMonth = new Date(year, month, 1);
         const lastOfCurrentMonth = new Date(year, month + 1, 0);
-        const firstOfNextMonth = new Date(year, month + 1, 1);
 
         let prevMonthEnd = lastOfPrevMonth.getDate();
         let currentMonthStart = firstOfCurrentMonth.getDate();
         let currentMonthEnd = lastOfCurrentMonth.getDate();
-        let nextMonthStart = firstOfNextMonth.getDate();
+        let nextMonthStart = 1;
 
         calendar.prev = range(
           prevMonthEnd,

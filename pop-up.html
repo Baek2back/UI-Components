@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Popup</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::after,
+      *::before {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Open Sans';
+        font-weight: 300;
+      }
+      .title {
+        color: #db5b33;
+        font-weight: 300;
+        text-align: center;
+      }
+      /* 팝업을 위한 CSS */
+      .popup {
+        position: absolute;
+        max-width: 520px;
+        min-height: 200px;
+        background: white;
+        z-index: 1000;
+      }
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 999;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Popup</h1>
+    <button class="popup-toggle">toggle popup</button>
+    <form class="popup">
+      <h1 class="title">Hello!</h1>
+      <p class="popup-contents">
+        Lorem Ipsum is simply dummy text of the printing and typesetting
+        industry. Lorem Ipsum has been the industry's standard dummy text ever
+        since the 1500s, when an unknown printer took a galley of type and
+        scrambled it to make a type specimen book.
+      </p>
+      <input type="text" class="popup-input" />
+      <button type="submit" class="btn ok">Ok</button>
+      <button type="button" class="btn cancel">Cancel</button>
+      <button type="button" class="btn close"><i class="bx bx-x"></i></button>
+    </form>
+    <div class="overlay"></div>
+    <p class="popup-message"></p>
+    <script></script>
+  </body>
+</html>
